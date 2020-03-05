@@ -1,7 +1,8 @@
 from src.lexer import is_number_token
-# expr   => term [(+ | -) term]*
-# term   => factor [(* | / | // | ^) factor]*
-# factor => num
+# expr        => term [(+ | -) term]*
+# term        => factor [(* | / | // | %) factor]*
+# factor      => num_or_pair [** factor]
+# num_or_pair => num | \( expr \)
 
 class BinaryOperation:
     def __init__(self, left, right, operation):
@@ -33,7 +34,7 @@ class SyntaxTreeBuilder:
     def expr(self):
         node = self.term()
         ct = self.current_token()
-        while ct and ct[0] in '+-':
+        while ct[0] in '+-':
             self.advance_token()
             node = BinaryOperation(node, self.term(), ct[0])
             ct = self.current_token()
@@ -41,12 +42,22 @@ class SyntaxTreeBuilder:
     def term(self):
         node = self.factor()
         ct = self.current_token()
-        while ct and ct[0] in '*//^':
+        while ct[0] in '*//%':
             self.advance_token()
             node = BinaryOperation(node, self.factor(), ct[0])
             ct = self.current_token()
         return node
     def factor(self):
+        # factor      => num_or_pair [** factor]
+        node = self.num_or_pair()
+        ct = self.current_token()
+        if ct[0] == '**':
+            self.advance_token()
+            node = BinaryOperation(node, self.factor(), '**')
+        return node
+
+    def num_or_pair(self):
+        # num_or_pair => num | \( expr \)
         ct = self.current_token()
         self.advance_token()
         if is_number_token(ct):
@@ -56,7 +67,7 @@ class SyntaxTreeBuilder:
             assert self.current_token()[0] == ')'
             self.advance_token()
             return node
-        raise ValueError('Unexpected token: ' + ct[0])
+        raise ValueError('unexpected token: ' + ct[0])
 
 # 1+2*3 => +(1,*(2,3))
 def build_abstract_tree(lex_result):

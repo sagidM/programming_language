@@ -15,12 +15,12 @@ class Lexer:
             token_type = self.scan_positive_number()
             if token_type:
                 pass
+            elif ch in '*/&|' and text_window.peek_char(1) == ch:
+                token_type = ch + ch
+                text_window.advance_char(2)
             elif ch in '+-*%=^;()':
                 token_type = ch
                 text_window.advance_char()
-            elif ch in '/&|' and text_window.peek_char(1) == ch:
-                token_type = ch + ch
-                text_window.advance_char(2)
             elif ch == ' ':
                 text_window.advance_char()
                 continue
@@ -28,6 +28,7 @@ class Lexer:
                 raise SyntaxError(f'Unknown token at :{text_window.offset} "{ch}"')
             token_value = text_window.text[start:text_window.offset]
             tokens.append((token_type, token_value))
+        tokens.append(('TERMINATE_TOKEN', ''))
         return tokens
 
     # 2, 5.2, -3, -5.3, .7, -.6, 6., -6.,

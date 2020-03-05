@@ -27,6 +27,12 @@ expression_params = (
             ('*', '*'), ('-', '-'), ('float_value', '7.'), ('//', '//'), ('int_value', '0')
         ]
     ),
+    (
+        '4**1',
+        [
+            ('int_value', '4'), ('**', '**'), ('int_value', '1')
+        ]
+    )
 )
 
 class TestLexerMethods(unittest.TestCase):
@@ -34,6 +40,10 @@ class TestLexerMethods(unittest.TestCase):
         for i in range(len(expression_params)):
             expr, lex_expected = expression_params[i]
             lex_actual = Lexer(expr).lex()
+            # Every lexer result ends with this token. It is nicer and
+            # more permormant to remove it from the result instead of
+            # mutating data or creating new lex_expected (using + on arrays)
+            self.assertEqual(('TERMINATE_TOKEN', ''), lex_actual.pop())
             self.assertEqual(lex_expected, lex_actual,
                 f'Error on the {i} param set with the expression "{expr}"')
 
