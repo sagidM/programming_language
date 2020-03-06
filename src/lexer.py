@@ -33,7 +33,7 @@ class Lexer:
 
     # 2, 5.2, -3, -5.3, .7, -.6, 6., -6.,
     # 5e1, -5e1, 5.1e1, -5.1e1, .1e1, -.1e1, 1e1, 1e-1
-    # {f}e-?{i}
+    # i, f, {f}e-?{i}
     def scan_positive_number(self):
         text_window = self.text_window
         float_result = self.scan_positive_float()
@@ -68,5 +68,6 @@ class Lexer:
 
 def in_no_except(value, seq):
     return value is not None and value in seq
+
 def is_number_token(token):
     return token[0] in ('float_value', 'int_value', 'exponent_value')

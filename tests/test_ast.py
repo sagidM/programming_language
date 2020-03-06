@@ -1,28 +1,56 @@
-import json
 import unittest
+import json
 from src.lexer import Lexer
-from src.abstract_tree import SyntaxTreeBuilder, Number
+from src.abstract_tree import SyntaxTreeBuilder
+from src.helpers.object_converter import convert_to_dict, to_pretty_format
 
-class SimpleEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if type(obj) is Number:
-            typ, value = obj.token
-            if typ == 'int_value':
-                return int(value)
-            if typ == 'float_value':
-                return float(value)
-            return value
-        return obj.__dict__ 
+
+expression_params = (
+    (
+        '1*2 + 3*4',
+        {
+            'left': {
+                'left': 1,
+                'right': 2,
+                'operation': '*'
+            },
+            'right': {
+                'left': 3,
+                'right': 4,
+                'operation': '*'
+            },
+            'operation': '+'
+        }
+    ),
+    (
+        '1 + 3 * 2 ** 4 + 5',
+        {
+            'left': {
+                'left': 1,
+                'right': {
+                    'left': 3,
+                    'right': {
+                        'left': 2,
+                        'right': 4,
+                        'operation': '**'
+                    },
+                    'operation': '*'
+                },
+                'operation': '+'
+            },
+            'right': 5,
+            'operation': '+'
+        }
+    ),
+)
 
 class TestAST(unittest.TestCase):
     def test_expr(self):
-        code = '1 ** 2 ** 5'
-        builder = SyntaxTreeBuilder(Lexer(code).lex())
-        res = builder.expr()
-        print(code)
-        print('Abstract Syntax Tree')
-        print(json.loads(json.dumps(SimpleEncoder(indent=2).encode(res))))
-        # print(json.dumps(res.__dict__))
+        for expression_param in expression_params:
+            expr, ast_as_dict_expected = expression_param
+            builder = SyntaxTreeBuilder(Lexer(expr).lex())
+            ast_as_dict_actual = convert_to_dict(builder.expr())
+            self.assertDictEqual(ast_as_dict_expected, ast_as_dict_actual)
 
 if __name__ == '__main__':
     unittest.main()

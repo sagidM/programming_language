@@ -47,6 +47,7 @@ class SyntaxTreeBuilder:
             node = BinaryOperation(node, self.factor(), ct[0])
             ct = self.current_token()
         return node
+
     def factor(self):
         # factor      => num_or_pair [** factor]
         node = self.num_or_pair()
@@ -71,5 +72,4 @@ class SyntaxTreeBuilder:
 
 # 1+2*3 => +(1,*(2,3))
 def build_abstract_tree(lex_result):
-    for token_type, token_value in lex_result:
-        token_type
+    return SyntaxTreeBuilder(lex_result).expr()
