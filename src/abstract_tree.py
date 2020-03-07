@@ -1,6 +1,7 @@
 from src.lexer import is_number_token
-# expr        => term [(+ | -) term]*
-# term        => factor [(* | / | // | %) factor]*
+# expr        => shiftable ((<< | >>) shiftable)*
+# shiftable   => term ((+ | -) term)*
+# term        => factor ((* | / | // | %) factor)*
 # factor      => unary [** factor]
 # unary       => (~ | + | -) factor | num_or_pair
 # num_or_pair => num | \( expr \)
@@ -29,9 +30,10 @@ class Number:
 '''
 Priorities:
 **          Exponentiation
-~x +x, -x   Bitwise not, positive, negative
-*, /, %     Multiplication, division, remainder
-+, -        Addition, subtraction
+~x +x -x    Bitwise not, positive, negative
+* / %       Multiplication, division, remainder
++ -         Addition, subtraction
+<< >>       Bitwise shifts
 '''
 class SyntaxTreeBuilder:
     def __init__(self, lex_result):
@@ -46,6 +48,15 @@ class SyntaxTreeBuilder:
         self.current_token_index += 1
 
     def expr(self):
+        node = self.shiftable()
+        ct = self.current_token()
+        while ct[0] in ('<<', '>>'):
+            self.advance_token()
+            node = BinaryOperation(node, self.shiftable(), ct[0])
+            ct = self.current_token()
+        return node
+
+    def shiftable(self):
         node = self.term()
         ct = self.current_token()
         while ct[0] in '+-':

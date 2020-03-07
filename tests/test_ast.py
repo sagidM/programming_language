@@ -70,6 +70,22 @@ expression_params = (
             },
             'operation': '+'
         }
+    ),
+    (
+        '1 + 2 << 5 % 3',
+        {
+            'left': {
+                'left': 1,
+                'right': 2,
+                'operation': '+'
+            },
+            'right': {
+                'left': 5,
+                'right': 3,
+                'operation': '%'
+            },
+            'operation': '<<'
+        }
     )
 )
 

@@ -11,11 +11,11 @@ class Lexer:
         while text_window.may_continue():
             ch = text_window.peek_char()
             start = text_window.offset
-            
+
             token_type = self.scan_positive_number()
             if token_type:
                 pass
-            elif ch in '*/&|' and text_window.peek_char(1) == ch:
+            elif ch in '*/&|<>' and text_window.peek_char(1) == ch:
                 token_type = ch + ch
                 text_window.advance_char(2)
             elif ch in '+-*%=^;()~':
