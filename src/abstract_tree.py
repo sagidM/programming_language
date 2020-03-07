@@ -7,7 +7,7 @@ from src.lexer import is_number_token
 # num_or_pair => num | \( expr \)
 # 
 
-class BinaryOperation:
+class BinaryExpression:
     def __init__(self, left, right, operation):
         self.left = left
         self.right = right
@@ -52,7 +52,7 @@ class SyntaxTreeBuilder:
         ct = self.current_token()
         while ct[0] in ('<<', '>>'):
             self.advance_token()
-            node = BinaryOperation(node, self.shiftable(), ct[0])
+            node = BinaryExpression(node, self.shiftable(), ct[0])
             ct = self.current_token()
         return node
 
@@ -61,7 +61,7 @@ class SyntaxTreeBuilder:
         ct = self.current_token()
         while ct[0] in '+-':
             self.advance_token()
-            node = BinaryOperation(node, self.term(), ct[0])
+            node = BinaryExpression(node, self.term(), ct[0])
             ct = self.current_token()
         return node
     def term(self):
@@ -69,7 +69,7 @@ class SyntaxTreeBuilder:
         ct = self.current_token()
         while ct[0] in '*//%':
             self.advance_token()
-            node = BinaryOperation(node, self.factor(), ct[0])
+            node = BinaryExpression(node, self.factor(), ct[0])
             ct = self.current_token()
         return node
 
@@ -79,7 +79,7 @@ class SyntaxTreeBuilder:
         ct = self.current_token()
         if ct[0] == '**':
             self.advance_token()
-            node = BinaryOperation(node, self.factor(), '**')
+            node = BinaryExpression(node, self.factor(), '**')
         return node
 
     def unary(self):
