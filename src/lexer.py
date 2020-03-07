@@ -15,6 +15,8 @@ class Lexer:
             token_type = self.scan_positive_number()
             if token_type:
                 pass
+            elif self.scan_fixed_token('<=>'):
+                token_type = '<=>'
             elif ch in '*/&|<>' and text_window.peek_char(1) == ch:
                 token_type = ch + ch
                 text_window.advance_char(2)
@@ -31,6 +33,12 @@ class Lexer:
         tokens.append(('TERMINATE_TOKEN', ''))
         return tokens
 
+    def scan_fixed_token(self, token):
+        for c in token:
+            if self.text_window.peek_char(0) != c:
+                return False
+        self.text_window.advance_char(len(token))
+        return True
     # 2, 5.2, -3, -5.3, .7, -.6, 6., -6.,
     # 5e1, -5e1, 5.1e1, -5.1e1, .1e1, -.1e1, 1e1, 1e-1
     # i, f, {f}e-?{i}
