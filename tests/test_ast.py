@@ -42,6 +42,35 @@ expression_params = (
             'operation': '+'
         }
     ),
+    (
+        '(~2) ** 5 + ~4 * 3 // -1',
+        {
+            'left': {
+                'left': {
+                    'argument': 2,
+                    'operation': '~'
+                },
+                'right': 5,
+                'operation': '**'
+            },
+            'right': {
+                'left': {
+                    'left': {
+                        'argument': 4,
+                        'operation': '~'
+                    },
+                    'right': 3,
+                    'operation': '*'
+                },
+                'right': {
+                    'argument': 1,
+                    'operation': '-'
+                },
+                'operation': '//'
+            },
+            'operation': '+'
+        }
+    )
 )
 
 class TestAST(unittest.TestCase):

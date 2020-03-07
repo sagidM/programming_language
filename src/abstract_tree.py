@@ -1,8 +1,10 @@
 from src.lexer import is_number_token
 # expr        => term [(+ | -) term]*
 # term        => factor [(* | / | // | %) factor]*
-# factor      => num_or_pair [** factor]
+# factor      => unary [** factor]
+# unary       => (~ | + | -) factor | num_or_pair
 # num_or_pair => num | \( expr \)
+# 
 
 class BinaryOperation:
     def __init__(self, left, right, operation):
@@ -13,12 +15,24 @@ class BinaryOperation:
     def __str__(self):
         return f'< {self.left} ({self.operation}) {self.right} >'
 
+class UnaryExpression:
+    def __init__(self, operation, argument):
+        self.operation = operation
+        self.argument = argument
+
 class Number:
     def __init__(self, token):
         self.token = token
     def __str__(self):
         return f'Number({self.token})'
 
+'''
+Priorities:
+**          Exponentiation
+~x +x, -x   Bitwise not, positive, negative
+*, /, %     Multiplication, division, remainder
++, -        Addition, subtraction
+'''
 class SyntaxTreeBuilder:
     def __init__(self, lex_result):
         self.tokens = lex_result
@@ -49,12 +63,22 @@ class SyntaxTreeBuilder:
         return node
 
     def factor(self):
-        # factor      => num_or_pair [** factor]
-        node = self.num_or_pair()
+        # factor      => unary [** factor]
+        node = self.unary()
         ct = self.current_token()
         if ct[0] == '**':
             self.advance_token()
             node = BinaryOperation(node, self.factor(), '**')
+        return node
+
+    def unary(self):
+        # unary => (~ | + | -) factor | num_or_pair
+        ct = self.current_token()
+        if ct[0] in '~+-':
+            self.advance_token()
+            node = UnaryExpression(ct[0], self.factor())
+        else:
+            node = self.num_or_pair()
         return node
 
     def num_or_pair(self):

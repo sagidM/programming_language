@@ -18,7 +18,7 @@ class Lexer:
             elif ch in '*/&|' and text_window.peek_char(1) == ch:
                 token_type = ch + ch
                 text_window.advance_char(2)
-            elif ch in '+-*%=^;()':
+            elif ch in '+-*%=^;()~':
                 token_type = ch
                 text_window.advance_char()
             elif ch == ' ':
