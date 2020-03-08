@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+from src.executor import execute_from_code
+
+
+print('Welcome to the repl')
+
+while True:
+    code = input('|> ')
+    try:
+        result = execute_from_code(code)
+        print(result)
+    except Exception as e:
+        print('ERROR!')
+        print(e)
