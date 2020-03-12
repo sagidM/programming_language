@@ -47,6 +47,27 @@ class SyntaxTreeBuilder:
     def advance_token(self):
         self.current_token_index += 1
 
+    def parse(self):
+        ct = self.current_token()
+        while ct:
+            typ = ct[0]
+            if typ == 'fn':
+                self.function_block()
+            elif typ == 'if':
+                self.if_block()
+            else:
+                self.expr()
+            ct = self.current_token()
+
+    def function_block(self):
+        raise NotImplementedError('not implemented')
+
+    def if_block(self):
+        raise NotImplementedError('not implemented')
+
+    def lvalue(self):
+        raise NotImplementedError('not implemented')
+
     def expr(self):
         node = self.shiftable()
         ct = self.current_token()
