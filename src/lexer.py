@@ -1,5 +1,9 @@
+import re
 from typing import List
 from .helpers.text_window import TextWindow
+
+
+identifier_regex = re.compile('[^\W\d]\w*')
 
 class Lexer:
     def __init__(self, code):
@@ -15,6 +19,11 @@ class Lexer:
             token_type = self.scan_positive_number()
             if token_type:
                 pass
+            elif ch == '\n':
+                token_type = '\n'
+                text_window.advance_char()
+            elif self.scan_fixed_token('\r\n'):
+                token_type = '\n'  # does not support CRLF, only LF
             elif self.scan_fixed_token('<=>'):
                 token_type = '<=>'
             elif ch in '*/&|<>' and text_window.peek_char(1) == ch:
@@ -23,6 +32,8 @@ class Lexer:
             elif ch in '+-*%=^;()~':
                 token_type = ch
                 text_window.advance_char()
+            elif self.scan_identifier():
+                token_type = 'identifier'
             elif ch == ' ':
                 text_window.advance_char()
                 continue
@@ -32,6 +43,14 @@ class Lexer:
             tokens.append((token_type, token_value))
         tokens.append(('TERMINATE_TOKEN', ''))
         return tokens
+
+    def scan_identifier(self):
+        text_window = self.text_window
+        res = identifier_regex.search(text_window.text, text_window.offset)
+        if res is None or res.start() != text_window.offset:
+            return False
+        text_window.advance_char(len(res.group(0)))
+        return True
 
     def scan_fixed_token(self, token):
         for c in token:

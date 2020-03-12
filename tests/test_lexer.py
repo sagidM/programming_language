@@ -32,7 +32,14 @@ expression_params = (
         [
             ('int_value', '4'), ('**', '**'), ('int_value', '1')
         ]
-    )
+    ),
+    (
+        '5 + x - another_variable + y',
+        [
+            ('int_value', '5'), ('+', '+'), ('identifier', 'x'), ('-', '-'),
+            ('identifier', 'another_variable'), ('+', '+'), ('identifier', 'y')
+        ]
+    ),
 )
 
 class TestLexerMethods(unittest.TestCase):

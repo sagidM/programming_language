@@ -86,6 +86,24 @@ expression_params = (
             },
             'operation': '<<'
         }
+    ),
+    (
+        '5 + x * -(another_variable + y)',
+        {
+            'left': 5,
+            'right': {
+                'left': 'y',
+                'right': {
+                    'argument': {
+                        'left': ('identifier', 'another_variable'),
+                        'right': ('identifier', 'y'),
+                        'operation': '+'
+                    },
+                    'operation': '-'
+                },
+                'operation': '*'
+            }
+        }
     )
 )
 
