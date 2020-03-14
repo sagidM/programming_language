@@ -31,6 +31,7 @@ parser.add_argument('-o', '--output',
     help='Outputs either tokens or AST')
 parser.add_argument('--oneline', default=None, help='Executes a line instead of a file')
 parser.add_argument('filename', default=None, nargs='?', help='File that should be run')
+# TODO: fix an error when --oneline starts with "-"
 args = parser.parse_args(argv[1:])
 
 print(run(args))

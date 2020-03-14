@@ -29,7 +29,7 @@ class Lexer:
             elif ch in '*/&|<>' and text_window.peek_char(1) == ch:
                 token_type = ch + ch
                 text_window.advance_char(2)
-            elif ch in '+-*%=^;()~':
+            elif ch in '+-*%=^;,.()[]~':
                 token_type = ch
                 text_window.advance_char()
             elif self.scan_identifier():
@@ -78,8 +78,8 @@ class Lexer:
     # {i}, {i}.{i}, {i}., .{i}
     def scan_positive_float(self):
         start = self.text_window.offset
-        self.scan_positive_int()
-        if self.text_window.peek_char() == '.':
+        if self.scan_positive_int() and self.text_window.peek_char() == '.' or\
+           self.text_window.peek_char() == '.' and (self.text_window.peek_char(1) or '').isdigit():
             self.text_window.advance_char()
             self.scan_positive_int()
             return 'float_value' if start < self.text_window.offset else None

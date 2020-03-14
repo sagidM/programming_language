@@ -1,11 +1,21 @@
 from src.lexer import is_number_token
-# expr        => shiftable ((<< | >>) shiftable)*
-# shiftable   => term ((+ | -) term)*
-# term        => factor ((* | / | // | %) factor)*
-# factor      => unary [** factor]
-# unary       => (~ | + | -) factor | num_or_pair
-# num_or_pair => num | \( expr \)
-# 
+# expr         => shiftable ((<< | >>) shiftable)*
+# shiftable    => term ((+ | -) term)*
+# term         => unary ((* | / | // | %) unary)*
+# unary        => (~ | + | -) unary | factor [** unary]
+# factor       => (LPAREN expr RPAREN | literal | IDENTIFIER) [member | call | subscript]*
+# member       => . IDENTIFIER
+# call         => LPAREN [expr [, expr]*] RPAREN
+# subscript    => LSBRACKET expr RSBRACKET
+# literal      => NUM | STRING
+
+# terminable parts:
+# NUM          => int or double C-like number: 4, 1.5, 2., .7, 2.4e-2
+# IDENTIFIER   => C-like identifier including non-ASCII letters: s, ё_2_
+# LPAREN       => (
+# RPAREN       => )
+# LSBRACKET    => [
+# RSBRACKET    => ]
 
 class BinaryExpression:
     def __init__(self, left, right, operation):
@@ -15,6 +25,21 @@ class BinaryExpression:
 
     def __str__(self):
         return f'< {self.left} ({self.operation}) {self.right} >'
+
+class MemberExpression:
+    def __init__(self, obj, prop):
+        self.obj = obj
+        self.prop = prop
+
+class Call:
+    def __init__(self, callee, arguments):
+        self.callee = callee
+        self.arguments = arguments
+
+class Substript:
+    def __init__(self, accessible, index):
+        self.accessible = accessible
+        self.index = index
 
 class UnaryExpression:
     def __init__(self, operation, argument):
@@ -85,46 +110,91 @@ class SyntaxTreeBuilder:
             node = BinaryExpression(node, self.term(), ct[0])
             ct = self.current_token()
         return node
+
     def term(self):
-        node = self.factor()
+        node = self.unary()
         ct = self.current_token()
         while ct[0] in '*//%':
             self.advance_token()
-            node = BinaryExpression(node, self.factor(), ct[0])
+            node = BinaryExpression(node, self.unary(), ct[0])
             ct = self.current_token()
         return node
 
-    def factor(self):
-        # factor      => unary [** factor]
-        node = self.unary()
-        ct = self.current_token()
-        if ct[0] == '**':
-            self.advance_token()
-            node = BinaryExpression(node, self.factor(), '**')
-        return node
-
     def unary(self):
-        # unary => (~ | + | -) factor | num_or_pair
         ct = self.current_token()
         if ct[0] in '~+-':
             self.advance_token()
-            node = UnaryExpression(ct[0], self.factor())
-        else:
-            node = self.num_or_pair()
+            return UnaryExpression(ct[0], self.unary())
+
+        node = self.factor()
+        ct = self.current_token()
+        if ct[0] == '**':
+            self.advance_token()
+            node = BinaryExpression(node, self.unary(), '**')
         return node
 
-    def num_or_pair(self):
-        # num_or_pair => num | \( expr \)
+    def factor(self):
+        # literal => (LPAREN expr RPAREN | literal) [call | subscript]*
         ct = self.current_token()
         self.advance_token()
-        if is_number_token(ct):
-            return Number(ct)
         if ct[0] == '(':
             node = self.expr()
             assert self.current_token()[0] == ')'
             self.advance_token()
-            return node
-        raise ValueError('unexpected token: ' + ct[0])
+        elif ct[0] == 'identifier':
+            node = ct
+        else:
+            # TODO: add another literals
+            if ct[0] not in ('int_value', 'float_value', 'exponent_value'):
+                raise NotImplementedError(f'Unknown literal: {ct[0]}')
+            node = Number(ct)
+        
+        while True:
+            ct = self.current_token()
+            if ct[0] == '.':    # obj.prop
+                self.advance_token()
+                prop = self.current_token()
+                if prop[0] != 'identifier':
+                    raise SyntaxError(str(prop[1]) + ' is given, but identifier is expected')
+                node = MemberExpression(node, prop)
+            elif ct[0] == '(':  # f()
+                self.skip_token('(')
+                node = Call(node, self.call_arguments())
+                self.skip_token(')', 'There is no closing bracket ")" for the function call')
+            elif ct[0] == '[':  # arr[index]
+                self.skip_token('[')
+                node = Substript(node, self.expr())
+                self.skip_token(']', 'There is no closing square bracket "]" for the subscript')
+            else:
+                return node
+
+    def call_arguments(self):
+        args = []
+        if self.current_token()[0] == ')':
+            return args
+        args.append(self.expr())    # no comma before 1st arg
+        while self.current_token()[0] != ')':
+            self.skip_token(',', 'Arguments should be separated by commas')
+            args.append(self.expr())
+        return args
+
+    def literal(self):
+        ct = self.current_token()
+        if is_number_token(ct):
+            self.advance_token()
+            return Number(ct)
+
+    def expr_in_parenthesis(self):
+        self.skip_token('(')
+        node = self.expr()
+        self.skip_token(')', 'Closing bracket is not found')
+        return node
+
+    def skip_token(self, token: str, msg: str = ''):
+        if self.current_token()[0] != token:
+            raise SyntaxError(msg)
+        self.advance_token()
+
 
 # 1+2*3 => +(1,*(2,3))
 def build_abstract_tree(lex_result):
