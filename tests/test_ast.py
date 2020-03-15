@@ -92,7 +92,7 @@ expression_params = (
         {
             'left': 5,
             'right': {
-                'left': 'y',
+                'left': ('identifier', 'x'),
                 'right': {
                     'argument': {
                         'left': ('identifier', 'another_variable'),
@@ -102,7 +102,8 @@ expression_params = (
                     'operation': '-'
                 },
                 'operation': '*'
-            }
+            },
+            'operation': '+'
         }
     )
 )
@@ -113,7 +114,7 @@ class TestAST(unittest.TestCase):
             expr, ast_as_dict_expected = expression_param
             builder = SyntaxTreeBuilder(Lexer(expr).lex())
             ast_as_dict_actual = convert_to_dict(builder.expr())
-            self.assertDictEqual(ast_as_dict_expected, ast_as_dict_actual)
+            self.assertDictEqual(convert_to_dict(ast_as_dict_expected), ast_as_dict_actual)
 
 if __name__ == '__main__':
     unittest.main()
