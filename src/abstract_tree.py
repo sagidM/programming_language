@@ -27,9 +27,9 @@ class BinaryExpression:
         return f'< {self.left} ({self.operation}) {self.right} >'
 
 class MemberExpression:
-    def __init__(self, obj, prop):
-        self.obj = obj
-        self.prop = prop
+    def __init__(self, object, property):
+        self.object = object
+        self.property = property
 
 class Call:
     def __init__(self, callee, arguments):
@@ -157,6 +157,7 @@ class SyntaxTreeBuilder:
                 if prop[0] != 'identifier':
                     raise SyntaxError(str(prop[1]) + ' is given, but identifier is expected')
                 node = MemberExpression(node, prop)
+                self.advance_token()
             elif ct[0] == '(':  # f()
                 self.skip_token('(')
                 node = Call(node, self.call_arguments())
@@ -192,7 +193,7 @@ class SyntaxTreeBuilder:
 
     def skip_token(self, token: str, msg: str = ''):
         if self.current_token()[0] != token:
-            raise SyntaxError(msg)
+            raise SyntaxError(msg + '; given token: ' + str(self.current_token()))
         self.advance_token()
 
 
