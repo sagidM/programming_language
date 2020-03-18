@@ -12,14 +12,14 @@ expression_params = (
             'left': {
                 'left': 1,
                 'right': 2,
-                'operation': '*'
+                'operator': '*'
             },
             'right': {
                 'left': 3,
                 'right': 4,
-                'operation': '*'
+                'operator': '*'
             },
-            'operation': '+'
+            'operator': '+'
         }
     ),
     (
@@ -32,14 +32,14 @@ expression_params = (
                     'right': {
                         'left': 2,
                         'right': 4,
-                        'operation': '**'
+                        'operator': '**'
                     },
-                    'operation': '*'
+                    'operator': '*'
                 },
-                'operation': '+'
+                'operator': '+'
             },
             'right': 5,
-            'operation': '+'
+            'operator': '+'
         }
     ),
     (
@@ -48,27 +48,27 @@ expression_params = (
             'left': {
                 'left': {
                     'argument': 2,
-                    'operation': '~'
+                    'operator': '~'
                 },
                 'right': 5,
-                'operation': '**'
+                'operator': '**'
             },
             'right': {
                 'left': {
                     'left': {
                         'argument': 4,
-                        'operation': '~'
+                        'operator': '~'
                     },
                     'right': 3,
-                    'operation': '*'
+                    'operator': '*'
                 },
                 'right': {
                     'argument': 1,
-                    'operation': '-'
+                    'operator': '-'
                 },
-                'operation': '//'
+                'operator': '//'
             },
-            'operation': '+'
+            'operator': '+'
         }
     ),
     (
@@ -77,14 +77,14 @@ expression_params = (
             'left': {
                 'left': 1,
                 'right': 2,
-                'operation': '+'
+                'operator': '+'
             },
             'right': {
                 'left': 5,
                 'right': 3,
-                'operation': '%'
+                'operator': '%'
             },
-            'operation': '<<'
+            'operator': '<<'
         }
     ),
     (
@@ -97,13 +97,13 @@ expression_params = (
                     'argument': {
                         'left': ['identifier', 'another_variable'],
                         'right': ['identifier', 'y'],
-                        'operation': '+'
+                        'operator': '+'
                     },
-                    'operation': '-'
+                    'operator': '-'
                 },
-                'operation': '*'
+                'operator': '*'
             },
-            'operation': '+'
+            'operator': '+'
         }
     ),
     (
@@ -122,21 +122,21 @@ expression_params = (
                                         'object': ['identifier', 'obj'],
                                         'property': ['identifier', 'prop']
                                     },
-                                    'operation': '+'
+                                    'operator': '+'
                                 }
                             ]
                         },
                         'index': {
                             'left': 3,
                             'right': 1,
-                            'operation': '-'
+                            'operator': '-'
                         }
                     },
                     ['identifier', 'second_arg']
                 ],
             },
             'right': 1,
-            'operation': '**'
+            'operator': '**'
         }
     ),
     (
@@ -165,7 +165,7 @@ expression_params = (
                             'callee': {
                                 'left': ['identifier', 'x'],
                                 'right': ['identifier', 'y'],
-                                'operation': '+'
+                                'operator': '+'
                             },
                             'arguments': []
                         },

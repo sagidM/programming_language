@@ -18,13 +18,13 @@ from src.lexer import is_number_token
 # RSBRACKET    => ]
 
 class BinaryExpression:
-    def __init__(self, left, right, operation):
+    def __init__(self, left, right, operator):
         self.left = left
         self.right = right
-        self.operation = operation
+        self.operator = operator
 
     def __str__(self):
-        return f'< {self.left} ({self.operation}) {self.right} >'
+        return f'< {self.left} ({self.operator}) {self.right} >'
 
 class MemberExpression:
     def __init__(self, object, property):
@@ -42,8 +42,8 @@ class Substript:
         self.index = index
 
 class UnaryExpression:
-    def __init__(self, operation, argument):
-        self.operation = operation
+    def __init__(self, operator, argument):
+        self.operator = operator
         self.argument = argument
 
 class Number:
