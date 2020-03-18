@@ -183,7 +183,7 @@ expression_params = (
     )
 )
 
-class TestAST(unittest.TestCase):
+class TestAST_expr(unittest.TestCase):
     def test_expr(self):
         for expression_param in expression_params:
             expr, ast_as_dict_expected = expression_param
