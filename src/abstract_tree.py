@@ -72,7 +72,7 @@ class SyntaxTreeBuilder:
     def advance_token(self):
         self.current_token_index += 1
 
-    def parse(self):
+    def parse_body(self):
         ct = self.current_token()
         while ct:
             typ = ct[0]
