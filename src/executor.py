@@ -25,10 +25,10 @@ def execute_ast_expression(root):
     if tp is BinaryExpression:
         left = execute_ast_expression(root.left)
         right = execute_ast_expression(root.right)
-        return binary_operations[root.operation](left, right)
+        return binary_operations[root.operator](left, right)
     if tp is UnaryExpression:
         num = execute_ast_expression(root.argument)
-        return unary_operations[root.operation](num)
+        return unary_operations[root.operator](num)
     if tp is Number:
         number_type, number_value = root.token
         if number_type == 'int_value':
