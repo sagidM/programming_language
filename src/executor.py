@@ -38,8 +38,11 @@ def execute_ast_expression(root):
 
 def execute_from_code(code):
     lex_result = lex(code)
-    tree = build_abstract_tree(lex_result)
-    return execute_ast_expression(tree)
+    tree_statements = build_abstract_tree(lex_result)
+    result = []
+    for tree in tree_statements:
+        result.append(execute_ast_expression(tree))
+    return result
 
 def lex(code):
     return Lexer(code).lex()

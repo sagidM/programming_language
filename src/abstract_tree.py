@@ -73,16 +73,19 @@ class SyntaxTreeBuilder:
         self.current_token_index += 1
 
     def parse_body(self):
-        ct = self.current_token()
-        while ct:
-            typ = ct[0]
+        typ = self.current_token()[0]
+        statements = []
+        while typ != 'TERMINATE_TOKEN':
             if typ == 'fn':
-                self.function_block()
+                statements.append(self.function_block())
             elif typ == 'if':
-                self.if_block()
+                statements.append(self.if_block())
+            elif typ in ';\n':
+                self.advance_token()
             else:
-                self.expr()
-            ct = self.current_token()
+                statements.append(self.expr())
+            typ = self.current_token()[0]
+        return statements
 
     def function_block(self):
         raise NotImplementedError('not implemented')
@@ -143,6 +146,8 @@ class SyntaxTreeBuilder:
             self.advance_token()
         elif ct[0] == 'identifier':
             node = ct
+        elif ct[0] == 'TERMINATE_TOKEN':
+            raise SyntaxError('Unexpected TERMINATE_TOKEN')
         else:
             # TODO: add another literals
             if ct[0] not in ('int_value', 'float_value', 'exponent_value'):
@@ -199,4 +204,4 @@ class SyntaxTreeBuilder:
 
 # 1+2*3 => +(1,*(2,3))
 def build_abstract_tree(lex_result):
-    return SyntaxTreeBuilder(lex_result).expr()
+    return SyntaxTreeBuilder(lex_result).parse_body()

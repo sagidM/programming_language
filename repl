@@ -7,7 +7,7 @@ print('Welcome to the repl')
 while True:
     code = input('|> ')
     try:
-        result = execute_from_code(code)
+        result = execute_from_code(code)[-1]    # print the last result
         print(result)
     except Exception as e:
         print('ERROR!')
