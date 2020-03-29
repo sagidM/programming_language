@@ -3,7 +3,7 @@ from typing import List
 from .helpers.text_window import TextWindow
 
 
-identifier_regex = re.compile('[^\W\d]\w*')
+identifier_regex = re.compile(r'[^\W\d]\w*')
 
 class Lexer:
     def __init__(self, code):
