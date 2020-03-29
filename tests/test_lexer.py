@@ -48,7 +48,7 @@ class TestLexerMethods(unittest.TestCase):
             expr, lex_expected = expression_params[i]
             lex_actual = Lexer(expr).lex()
             # Every lexer result ends with this token. It is nicer and
-            # more permormant to remove it from the result instead of
+            # more performant to remove it from the result instead of
             # mutating data or creating new lex_expected (using + on arrays)
             self.assertEqual(('TERMINATE_TOKEN', ''), lex_actual.pop())
             self.assertEqual(lex_expected, lex_actual,
