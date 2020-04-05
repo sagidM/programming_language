@@ -12,6 +12,7 @@ class Lexer:
     def lex(self) -> List[str]:
         tokens = []
         text_window = self.text_window
+        save_indentation = True     # save indentation from the beginning of every new line
         while text_window.may_continue():
             ch = text_window.peek_char()
             start = text_window.offset
@@ -24,6 +25,8 @@ class Lexer:
                 text_window.advance_char()
             elif self.scan_fixed_token('\r\n'):
                 token_type = '\n'  # does not support CRLF, only LF
+            elif save_indentation and self.scan_indentation():
+                token_type = 'indentation'
             elif self.scan_fixed_token('<=>'):
                 token_type = '<=>'
             elif ch in '*/&|<>' and text_window.peek_char(1) == ch:
@@ -39,6 +42,7 @@ class Lexer:
                 continue
             else:
                 raise SyntaxError(f'Unknown token at :{text_window.offset} "{ch}"')
+            save_indentation = token_type == '\n'
             token_value = text_window.text[start:text_window.offset]
             tokens.append((token_type, token_value))
         tokens.append(('TERMINATE_TOKEN', ''))
@@ -58,6 +62,16 @@ class Lexer:
                 return False
         self.text_window.advance_char(len(token))
         return True
+
+    def scan_indentation(self):
+        text_window = self.text_window
+        INDENTS = ' \t'
+        has_indent = False
+        while text_window.may_continue() and text_window.text[text_window.offset] in INDENTS:
+            text_window.advance_char()
+            has_indent = True
+        return has_indent
+
     # 2, 5.2, -3, -5.3, .7, -.6, 6., -6.,
     # 5e1, -5e1, 5.1e1, -5.1e1, .1e1, -.1e1, 1e1, 1e-1
     # i, f, {f}e-?{i}
