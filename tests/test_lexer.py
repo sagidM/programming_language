@@ -1,7 +1,7 @@
 import unittest
 from src.lexer import Lexer
 
-expression_params = (
+one_line_params = (
     (
         '0 1 222 3.12 44. .55 6e0 7e-3 8.2e1 9.e2 10.e-0 .11e1 .12e-2 13.11e-1',
         [
@@ -42,10 +42,27 @@ expression_params = (
     ),
 )
 
+
+multiline_params = (
+    (
+'''
+1 + 2.5
+  4
+   3 + 6
+'''.strip('\n'),
+        [
+            ('int_value', '1'), ('+', '+'), ('float_value', '2.5'), ('\n', '\n'),
+            ('indentation', '  '), ('int_value', '4'), ('\n', '\n'),
+            ('indentation', '   '), ('int_value', '3'), ('+', '+'), ('int_value', '6')
+        ]
+    ),
+)
+
+
 class TestLexerMethods(unittest.TestCase):
-    def test_expressions(self):
-        for i in range(len(expression_params)):
-            expr, lex_expected = expression_params[i]
+    def _test_with_params(self, params):
+        for i in range(len(params)):
+            expr, lex_expected = params[i]
             lex_actual = Lexer(expr).lex()
             # Every lexer result ends with this token. It is nicer and
             # more performant to remove it from the result instead of
@@ -54,6 +71,10 @@ class TestLexerMethods(unittest.TestCase):
             self.assertEqual(lex_expected, lex_actual,
                 f'Error on the {i} param set with the expression "{expr}"')
 
+    def test_one_line(self):
+        self._test_with_params(one_line_params)
+    def test_multiline(self):
+        self._test_with_params(multiline_params)
 
 if __name__ == '__main__':
     unittest.main()
