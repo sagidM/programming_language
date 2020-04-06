@@ -180,6 +180,30 @@ expression_params = (
             },
             'arguments': [0]
         }
+    ),
+    (
+        'x = 10',
+        {
+            'left': ['identifier', 'x'],
+            'right': 10,
+            'operator': '='
+        }
+    ),
+    (
+        'x = y = 1+2',
+        {
+            'left': ['identifier', 'x'],
+            'right': {
+                'left': ['identifier', 'y'],
+                'right': {
+                    'left': 1,
+                    'right': 2,
+                    'operator': '+'
+                },
+                'operator': '='
+            },
+            'operator': '='
+        }
     )
 )
 

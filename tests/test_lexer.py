@@ -40,6 +40,10 @@ one_line_params = (
             ('identifier', 'another_variable'), ('+', '+'), ('identifier', 'y')
         ]
     ),
+    (
+        'x = 10',
+        [('identifier', 'x'), ('=', '='), ('int_value', '10')]
+    ),
 )
 
 

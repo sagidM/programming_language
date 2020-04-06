@@ -75,6 +75,7 @@ class SyntaxTreeBuilder:
     def parse_body(self):
         typ = self.current_token()[0]
         statements = []
+        previous_typ = None
         while typ != 'TERMINATE_TOKEN':
             if typ == 'fn':
                 statements.append(self.function_block())
@@ -83,7 +84,12 @@ class SyntaxTreeBuilder:
             elif typ in ';\n':
                 self.advance_token()
             else:
+                if previous_typ is not None and previous_typ not in ';\n':
+                    raise SyntaxError(
+                        'Statements should be separated ";" by semicolons or break lines "\\n"'
+                    )
                 statements.append(self.expr())
+            previous_typ = typ
             typ = self.current_token()[0]
         return statements
 
@@ -93,12 +99,21 @@ class SyntaxTreeBuilder:
     def if_block(self):
         raise NotImplementedError('not implemented')
 
-    def lvalue(self):
-        raise NotImplementedError('not implemented')
+    @staticmethod
+    def is_lvalue(node):
+        return hasattr(node, '__len__') and len(node) == 2 and node[0] == 'identifier'
 
     def expr(self):
         node = self.shiftable()
         ct = self.current_token()
+        if ct[0] == '=':
+            if not SyntaxTreeBuilder.is_lvalue(node):
+                raise SyntaxError(
+                    f'''The expression {node} is put before an assignment operator "=", but is not lvalue.
+Lvalue expressions can be variables, but never literals like numbers.'''
+                )
+            self.advance_token()
+            return BinaryExpression(node, self.expr(), '=')
         while ct[0] in ('<<', '>>'):
             self.advance_token()
             node = BinaryExpression(node, self.shiftable(), ct[0])

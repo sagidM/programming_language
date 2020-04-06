@@ -34,4 +34,13 @@ parser.add_argument('filename', default=None, nargs='?', help='File that should 
 # TODO: fix an error when --oneline starts with "-"
 args = parser.parse_args(argv[1:])
 
-print(run(args))
+try:
+    print(run(args))
+except SyntaxError as e:
+    print('SyntaxError was thrown. If you are being tired remember to be happy :)')
+    print(e)
+    exit(1)
+except NotImplementedError as e:
+    print('This has not been implemented but it seems the author has some plans about it.')
+    print(e)
+    exit(1)
