@@ -61,9 +61,12 @@ $ python src/main.py -o lex --oneline "1 + 2"
 # output
 [('int_value', '1'), ('+', '+'), ('int_value', '2'), ('TERMINATE_TOKEN', '')]
 ```
-If you do not pass **--oneline**, the string `"1 + 2"` will be interpreted as a name of the file that should be run.
+If you do not pass `--oneline`, the string `"1 + 2"` will be interpreted as a name of the file that should be executed.
 
-If you do not pass `-o` or `--output`, the line or file will be run as a program.
+An optional argument `-o` or `--output` has 3 values, which denote:
+- `lex` -- to output lexemes
+- `ast` -- to output Abstract Syntax Tree
+- `result` (default) -- to output just a result of the execution the file/string as a program line by line
 
 One more example
 ```bash
