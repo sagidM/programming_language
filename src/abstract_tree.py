@@ -26,6 +26,15 @@ class BinaryExpression:
     def __str__(self):
         return f'< {self.left} ({self.operator}) {self.right} >'
 
+class UnaryExpression:
+    def __init__(self, operator, argument):
+        self.operator = operator
+        self.argument = argument
+
+class Identifier:
+    def __init__(self, name):
+        self.name = name
+
 class MemberExpression:
     def __init__(self, object, property):
         self.object = object
@@ -40,11 +49,6 @@ class Substript:
     def __init__(self, accessible, index):
         self.accessible = accessible
         self.index = index
-
-class UnaryExpression:
-    def __init__(self, operator, argument):
-        self.operator = operator
-        self.argument = argument
 
 class Number:
     def __init__(self, token):
@@ -102,7 +106,7 @@ class SyntaxTreeBuilder:
 
     @staticmethod
     def is_lvalue(node):
-        return hasattr(node, '__len__') and len(node) == 2 and node[0] == 'identifier'
+        return type(node) is Identifier
 
     def expr(self):
         node = self.shiftable()
@@ -161,7 +165,7 @@ Lvalue expressions can be variables, but never literals like numbers.'''
             assert self.current_token()[0] == ')'
             self.advance_token()
         elif ct[0] == 'identifier':
-            node = ct
+            node = Identifier(ct[1])
         elif ct[0] == 'TERMINATE_TOKEN':
             raise SyntaxError('Unexpected TERMINATE_TOKEN')
         else:

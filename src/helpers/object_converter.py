@@ -1,6 +1,6 @@
 import json
 from typing import Dict
-from src.abstract_tree import Number
+from src.abstract_tree import Number, Identifier
 
 
 class SimpleEncoder(json.JSONEncoder):
@@ -12,7 +12,9 @@ class SimpleEncoder(json.JSONEncoder):
             if typ == 'float_value':
                 return float(value)
             return value
-        return obj.__dict__ 
+        if type(obj) is Identifier:
+            return ['identifier', obj.name]
+        return obj.__dict__
 
 
 def convert_to_dict(obj) -> Dict:
