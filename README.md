@@ -6,7 +6,7 @@ This is an interpreter written in Python for a programming language I am buildin
 It is a dynamic indentation-sensitive language that is inspired by Python, Haskell, CoffeeScript and some other languages.
 
 # Motivation
-I am a developer who had a desire to build my own language since I began programming. Although the realization of meaninglessness to create yet another programming language has come quite early, I eventually decided that I should build a language chasing 2 goals: to gain deep knowledge in compilers and it just funny.
+I am a developer who had a desire to build my own language since I began programming. Although the realization of meaninglessness to create yet another programming language has come quite early, I eventually decided that I should build a language chasing 2 goals: to gain deep knowledge in compilers and it just fun.
 
 # Run interpreter in 3 steps
 > Notice, it is assumed that Python3 is installed.
