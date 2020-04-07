@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from src.lexer import Lexer
 from src.abstract_tree import build_abstract_tree
 from src.helpers.object_converter import to_pretty_format
-from src.executor import execute_ast_expression
+from src.executor import ExecutionContext
 
 def read_from_file(filename):
     with open(filename) as f:
@@ -21,7 +21,9 @@ def run(args):
     ast_statements = build_abstract_tree(tokens)
     if args.output == 'ast':
         return to_pretty_format(ast_statements)
-    return [execute_ast_expression(ast) for ast in ast_statements]
+
+    context = ExecutionContext()
+    return [context.execute_ast_expression(ast) for ast in ast_statements]
 
 
 parser = ArgumentParser()

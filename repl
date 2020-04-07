@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-from src.executor import execute_from_code
+from src.executor import ExecutionContext
 
 
 print('Welcome to the repl')
 
+context = ExecutionContext()
+
 while True:
     code = input('|> ')
     try:
-        result = execute_from_code(code)[-1]    # print the last result
+        result = context.execute_from_code(code)[-1]    # print the last result
         print(result)
     except Exception as e:
         print('ERROR!')
