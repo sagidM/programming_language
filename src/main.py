@@ -36,7 +36,9 @@ args = parser.parse_args(argv[1:])
 
 try:
     results = run(args)
-    if len(results) == 1:
+    if type(results) == str:
+        print(results)
+    elif len(results) == 1:
         print(results[0])
     else:
         print('Result line by line:')
