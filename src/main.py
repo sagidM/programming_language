@@ -18,10 +18,10 @@ def run(args):
     tokens = Lexer(code).lex()
     if args.output == 'lex':
         return tokens
-    ast = build_abstract_tree(tokens)
+    ast_statements = build_abstract_tree(tokens)
     if args.output == 'ast':
-        return to_pretty_format(ast)
-    return execute_ast_expression(ast)
+        return to_pretty_format(ast_statements)
+    return [execute_ast_expression(ast) for ast in ast_statements]
 
 
 parser = ArgumentParser()
@@ -35,7 +35,13 @@ parser.add_argument('filename', default=None, nargs='?', help='File that should 
 args = parser.parse_args(argv[1:])
 
 try:
-    print(run(args))
+    results = run(args)
+    if len(results) == 1:
+        print(results[0])
+    else:
+        print('Result line by line:')
+        for result in results:
+            print('|>', result)
 except SyntaxError as e:
     print('SyntaxError was thrown. If you are being tired remember to be happy :)')
     print(e)

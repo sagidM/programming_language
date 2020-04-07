@@ -69,6 +69,7 @@ class SyntaxTreeBuilder:
         if self.current_token_index < len(self.tokens):
             return self.tokens[self.current_token_index]
         return None
+
     def advance_token(self):
         self.current_token_index += 1
 
@@ -218,5 +219,6 @@ Lvalue expressions can be variables, but never literals like numbers.'''
 
 
 # 1+2*3 => +(1,*(2,3))
-def build_abstract_tree(lex_result):
-    return SyntaxTreeBuilder(lex_result).parse_body()
+def build_abstract_tree(lex_result) -> list:
+    ast_statements = SyntaxTreeBuilder(lex_result).parse_body()
+    return ast_statements
