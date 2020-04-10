@@ -2,12 +2,22 @@
 from src.executor import ExecutionContext
 
 
+def input_or_exit():
+    while True:
+        try:
+            return input('|> ')
+        except KeyboardInterrupt:   # ^C
+            print('\n(Press ^D to exit)')
+        except EOFError:            # ^D
+            print()
+            exit()
+
 print('Welcome to the repl')
 
 context = ExecutionContext()
 
 while True:
-    code = input('|> ')
+    code = input_or_exit()
     try:
         result = context.execute_from_code(code)[-1]    # print the last result
         print(result)
