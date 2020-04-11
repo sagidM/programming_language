@@ -1,7 +1,7 @@
 import unittest
 import json
 from src.lexer import Lexer
-from src.abstract_tree import SyntaxTreeBuilder
+from src.abstract_syntax_tree import SyntaxTreeBuilder
 from src.helpers.object_converter import convert_to_dict, to_pretty_format
 
 

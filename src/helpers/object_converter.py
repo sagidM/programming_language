@@ -1,6 +1,6 @@
 import json
 from typing import Dict
-from src.abstract_tree import Number, Identifier
+from src.abstract_syntax_tree import Number, Identifier
 
 
 class SimpleEncoder(json.JSONEncoder):
