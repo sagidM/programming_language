@@ -14,6 +14,14 @@ one_line_params = (
         ]
     ),
     (
+        '\n-\r\n+',
+        [
+            # CRLF is not supported, only LF,
+            # thus '\n' is the type of the token '\r\n'
+            ('\n', '\n'), ('-', '-'), ('\n', '\r\n'), ('+', '+')
+        ]
+    ),
+    (
         '43 + -123 && -4.5 ** 5',
         [
             ('int_value', '43'), ('+', '+'), ('-', '-'), ('int_value', '123'),
@@ -43,6 +51,15 @@ one_line_params = (
     (
         'x = 10',
         [('identifier', 'x'), ('=', '='), ('int_value', '10')]
+    ),
+    # Keywords
+    (
+        'let not_implemented = 1',
+        [('let', 'let'), ('identifier', 'not_implemented'), ('=', '='), ('int_value', '1')]
+    ),
+    (
+        'if 1 < 2',
+        [('if', 'if'), ('int_value', '1'), ('<', '<'), ('int_value', '2')]
     ),
 )
 

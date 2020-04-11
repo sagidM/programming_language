@@ -5,10 +5,19 @@ from .helpers.text_window import TextWindow
 
 identifier_regex = re.compile(r'[^\W\d]\w*')
 
+# TODO: build trie
+reserved_tokens = '\n\
+ + - * / % = ^ ~ & | < > ; , . ( ) [ ]\
+ ** // && || << >>\
+ <=>'.split(' ')
+reserved_keywords = 'let if while for'.split(' ')
+# TODO: get rid of this when create the Trie to scan reserved_tokens
+reserved_tokens.sort(key=lambda s: len(s), reverse=True)
+
 class Lexer:
     def __init__(self, code):
         self.text_window = TextWindow(code)
-    
+
     def lex(self) -> List[str]:
         tokens = []
         text_window = self.text_window
@@ -22,24 +31,17 @@ class Lexer:
                 pass
             elif save_indentation and self.scan_indentation():
                 token_type = 'indentation'
-            elif ch == '\n':
-                token_type = '\n'
-                text_window.advance_char()
-            elif self.scan_fixed_token('\r\n'):
-                token_type = '\n'  # does not support CRLF, only LF
-            elif self.scan_fixed_token('<=>'):
-                token_type = '<=>'
-            elif ch in '*/&|<>' and text_window.peek_char(1) == ch:
-                token_type = ch + ch
-                text_window.advance_char(2)
-            elif ch in '+-*%=^;,.()[]~':
-                token_type = ch
-                text_window.advance_char()
-            elif self.scan_identifier():
-                token_type = 'identifier'
             elif ch == ' ':
                 text_window.advance_char()
                 continue
+            elif self.scan_fixed_token('\r\n'):
+                token_type = '\n'  # does not support CRLF, only LF
+            elif self.scan_fixed_tokens(reserved_tokens):
+                token_type = text_window.text[start:text_window.offset]
+            elif self.scan_identifier():
+                # TODO: avoid the doule slicing here and below not inflating the code
+                token_value = text_window.text[start:text_window.offset]
+                token_type = token_value if token_value in reserved_keywords else 'identifier'
             else:
                 raise SyntaxError(f'Unknown token at :{text_window.offset} "{ch}"')
             save_indentation = token_type == '\n'
@@ -55,6 +57,12 @@ class Lexer:
             return False
         text_window.advance_char(len(res.group(0)))
         return True
+
+    def scan_fixed_tokens(self, tokens):
+        for token in tokens:
+            if self.scan_fixed_token(token):
+                return True
+        return False
 
     def scan_fixed_token(self, token):
         for i in range(len(token)):
