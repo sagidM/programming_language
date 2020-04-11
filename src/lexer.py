@@ -20,13 +20,13 @@ class Lexer:
             token_type = self.scan_positive_number()
             if token_type:
                 pass
+            elif save_indentation and self.scan_indentation():
+                token_type = 'indentation'
             elif ch == '\n':
                 token_type = '\n'
                 text_window.advance_char()
             elif self.scan_fixed_token('\r\n'):
                 token_type = '\n'  # does not support CRLF, only LF
-            elif save_indentation and self.scan_indentation():
-                token_type = 'indentation'
             elif self.scan_fixed_token('<=>'):
                 token_type = '<=>'
             elif ch in '*/&|<>' and text_window.peek_char(1) == ch:
@@ -57,8 +57,8 @@ class Lexer:
         return True
 
     def scan_fixed_token(self, token):
-        for c in token:
-            if self.text_window.peek_char(0) != c:
+        for i in range(len(token)):
+            if token[i] != self.text_window.peek_char(i):
                 return False
         self.text_window.advance_char(len(token))
         return True
