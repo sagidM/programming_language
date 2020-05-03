@@ -2,6 +2,9 @@
 
 This is an interpreter written in Python for a programming language I am building.
 
+
+TL;DR jump into [Examples section](#examples)
+
 # Description
 It is a dynamic indentation-sensitive language that is inspired by Python, Haskell, CoffeeScript and some other languages.
 
